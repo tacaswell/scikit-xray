@@ -42,10 +42,12 @@ from __future__ import (absolute_import, division, print_function,
 
 import time
 import six
+
 from six.moves import zip
 from six import string_types
 from collections import namedtuple, MutableMapping
 import numpy as np
+from itertools import tee
 
 import logging
 logger = logging.getLogger(__name__)
@@ -856,3 +858,11 @@ def bin_edges_to_centers(input_edges):
     """
     input_edges = np.asarray(input_edges)
     return (input_edges[:-1] + input_edges[1:]) * 0.5
+
+
+# https://docs.python.org/2/library/itertools.html#recipes
+def pairwise(iterable):
+    "s -> (s0,s1), (s1,s2), (s2, s3), ..."
+    a, b = tee(iterable)
+    next(b, None)
+    return zip(a, b)
