@@ -532,7 +532,7 @@ def pixel_to_radius(shape, calibrated_center, pixel_size=None):
         the coordinates of
 
     calibrated_center : tuple
-        The center in pixels (row, col)
+        The center in pixels-units (row, col)
 
     pixel_size : tuple, optional
         The size of a pixel (really the pitch) in real units. (height, width).
@@ -566,7 +566,7 @@ def pixel_to_phi(shape, calibrated_center, pixel_size=None):
         the coordinates of
 
     calibrated_center : tuple
-        The center in pixels (row, col)
+        The center in pixels-units (row, col)
 
     pixel_size : tuple, optional
         The size of a pixel (really the pitch) in real units. (height, width).
