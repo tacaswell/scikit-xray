@@ -642,7 +642,9 @@ class PowderStandard(object):
         A list of (d, (h, k, l), q) values.
     """
     def __init__(self, name, reflections):
-        self._reflections = [Reflection(d, HKL(*hkl), q)
+        self._reflections = [
+            Reflection(d,
+                       HKL(*hkl) if hkl is not None else None, q)
                              for d, hkl, q in reflections]
         self._reflections.sort(key=lambda x: x[-1])
         self._name = name
@@ -684,10 +686,12 @@ class PowderStandard(object):
         return 2 * np.arcsin(q * pre_factor)
 
     @classmethod
-    def from_lambda_2theta_hkl(cls, name, wavelength, two_theta, hkl):
+    def from_lambda_2theta_hkl(cls, name, wavelength, two_theta, hkl=None):
         two_theta = np.asarray(two_theta)
         q = ((4 * np.pi) / wavelength) * np.sin(two_theta / 2)
         d = 2 * np.pi / q
+        if hkl is None:
+            hkl = repeat(None)
         return cls(name, zip(d, hkl, q))
 
     def __len__(self):
