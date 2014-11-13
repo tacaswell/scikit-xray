@@ -5,6 +5,10 @@ python:
   - 3.4
 
 before_install:
+  - sudo add-apt-repository ppa:git-core
+  - sudo apt-get update
+  - sudo apt-get upgrade
+  - git --version
   - if [ ${TRAVIS_PYTHON_VERSION:0:1} == "2" ]; then wget http://repo.continuum.io/miniconda/Miniconda-3.5.5-Linux-x86_64.sh -O miniconda.sh; else wget http://repo.continuum.io/miniconda/Miniconda3-3.5.5-Linux-x86_64.sh -O miniconda.sh; fi
   - chmod +x miniconda.sh
   - ./miniconda.sh -b -p /home/travis/mc
@@ -14,6 +18,7 @@ before_install:
 install:
   - export GIT_FULL_HASH=`git rev-parse HEAD`
   - conda update conda --yes
+  - git clone https://github.com/conda/conda-build.git
   - conda create -n testenv --yes pip nose python=$TRAVIS_PYTHON_VERSION lmfit xraylib numpy scipy scikit-image netcdf4 six
   - source activate testenv
   - python setup.py install
