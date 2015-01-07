@@ -36,13 +36,14 @@
 Created on Jun 4, 2014
 '''
 
-import matplotlib as mpl
+import matplotlib.pyplot as plt
 import numpy as np
 from skxray.io.binary import read_binary
-from skxray.core import detector2D_to_1D
+from skxray.core import pixel_to_radius
+
 
 def get_cbr4_sample_img():
-    # define the 
+    # define the
     fname = "data/2d/cbr4_singlextal_rotate190_50deg_2s_90kev_203f.cor.042.cor"
     params = {"filename": fname,
             "nx": 2048,
@@ -50,27 +51,44 @@ def get_cbr4_sample_img():
             "nz": 1,
             "headersize": 0,
             "dsize": np.uint16,
-            # these numbers come from https://github.com/JamesDMartin/RamDog/blob/master/Calibration/APS--2009--CeO2.calib
+            # these numbers come from
+            # https://github.com/JamesDMartin/RamDog/blob/master/Calibration/APS--2009--CeO2.calib
             "wavelength": .13702,
             "detector_center": (1033.321, 1020.208),
             "dist_sample": 188.672,
             "pixel_size": (.200, .200)
             }
-    
+
     # read in a binary file
     data, header = read_binary(**params)
-    
+
     return data, params
-    
-def run():
-    # get the sample data
-    data, params = get_cbr4_sample_img
+
+
+def integrate_and_plot(data, params):
+    """
+    Integrate and plot a powder diffraction image
+    """
     # convert the data from 2d array to xyi relative to beam center
-    xyi = detector2D_to_1D(data, **params)
-    # convert xy to r
-    r = np.linalg.norm(xyi[:,0:2])
+
+    R = pixel_to_radius(data.shape,
+                        params['detector_center'],
+                        pixel_size=params['pixel_size'])
+
+    I = data.ravel()
+
     # bin i based on r
-    
-    
+    fig, (ax1, ax2) = plt.subplots(1, 2)
+    ax1.plot(R, I, lw=3, color='k')
+    ax2.imshow(data, cmap='gray')
+    cx, cy = params['detector_center']
+    ax2.axvline(cx, color='r')
+    ax2.axhline(cy, color='r')
+
+    plt.show()
+
+
 if __name__ == "__main__":
-    run()
+    # get the sample data
+    data, params = get_cbr4_sample_img()
+    integrate_and_plot(data, params)
